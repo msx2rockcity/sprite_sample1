@@ -1,0 +1,181 @@
+1000           ORG     0D000H
+1010           ;
+1020           LD      A,15
+1030           LD      (0F3E9H),A
+1040           LD      A,1
+1050           LD      (0F3EAH),A
+1060           LD      A,1
+1070           LD      (0F3EBH),A
+1080           CALL    0072H
+1090           ;
+1100           LD      B,11100010B
+1110           LD      C,1
+1120           CALL    0047H
+1130           ;
+1140           CALL    0069H
+1150           LD      HL,SPDAT
+1160           LD      DE,3800H
+1170           LD      BC,32
+1180           CALL    005CH
+1190           ;
+1200           LD      DE,IDAREA
+1210           LD      HL,IDNEW
+1220           LD      BC,416
+1230           LDIR
+1240           ;
+1250 NOCHEG:   LD      B,0
+1260           LD      IX,IDAREA-13
+1270 LOOP:     LD      DE,13
+1280           ADD     IX,DE
+1370           DEC     (IX+5)
+1380           JR      NZ,JR1
+1390           LD      A,(IX+4)
+1400           LD      (IX+5),A
+1410           CALL    MOVSPT
+1420 JR1:      CALL    00B7H
+1430           JP      C,RETURN
+1440           LD      A,B
+1450           INC     B
+1460           CP      30
+1470           JR      NZ,LOOP
+1480           CALL    WAIT
+1490           JR      NOCHEG
+1500           ;
+1510 MOVSPT:   PUSH    BC
+1520           LD      A,(IX+6)
+1530           OR      A
+1540           CALL    Z,DATSET
+1550           CALL    MOVE
+1560           POP     BC
+1570           RET
+1580 DATSET:   LD      H,(IX+12)
+1590           LD      L,(IX+11)
+1600           LD      A,(HL)
+1610           OR      A
+1620           JR      NZ,JR2
+1630           LD      A,(IX+10)
+1640           LD      (IX+12),A
+1650           LD      A,(IX+9)
+1660           LD      (IX+11),A
+1670           JR      DATSET
+1680 JR2:      LD      (IX+6),A
+1690           INC     HL
+1700           LD      A,(HL)
+1710           LD      (IX+7),A
+1720           INC     HL
+1730           LD      A,(HL)
+1740           LD      (IX+8),A
+1750           INC     HL
+1760           LD      A,L
+1770           LD      (IX+11),A
+1780           LD      A,H
+1790           LD      (IX+12),A
+1800           RET
+1810           ;
+1820 MOVE:     LD      A,(IX+7)
+1830           ADD     A,(IX+0)
+1840           LD      (IX+0),A
+1850           LD      A,(IX+8)
+1860           ADD     A,(IX+1)
+1870           LD      (IX+1),A
+1880           DEC     (IX+6)
+1890           LD      A,B
+1900           CALL    0087H
+1910           PUSH    IX
+1920           POP     DE
+1930           EX      DE,HL
+1940           LD      BC,4
+1950           CALL    005CH
+1960           RET
+1970           ;
+1980 WAIT:     LD      HL,0101H
+1990           DEC     L
+2000           JR      NZ,$-1
+2010           DEC     H
+2020           JR      NZ,$-4
+2030           RET
+2040           ;
+2050 RETURN:   CALL    00D2H
+2060           RET
+2070           ;
+2080 SPDAT:
+2090 DEFB      000H,04EH,07FH,07FH
+2100 DEFB      043H,03DH,042H,043H
+2110 DEFB      042H,03CH,040H,03FH
+2120 DEFB      00FH,02FH,01FH,000H
+2130 DEFB      060H,0F2H,0FEH,0FEH
+2140 DEFB      0C2H,0ACH,042H,0C2H
+2150 DEFB      042H,03CH,002H,0FCH
+2160 DEFB      0F0H,0F4H,0F8H,000H
+2170 IDNEW:
+2180 DEFB    034,056,00,02,4,4,0
+2190 DEFW    0,MOVDA2,MOVDA2
+2200 DEFB    067,054,00,03,3,3,0
+2210 DEFW    0,MOVDAT,MOVDAT
+2220 DEFB    017,068,00,04,4,4,0
+2230 DEFW    0,MOVDA3,MOVDA3
+2240 DEFB    020,075,00,05,4,4,0
+2250 DEFW    0,MOVDA4,MOVDA4
+2260 DEFB    120,015,00,06,3,3,0
+2270 DEFW    0,MOVDA5,MOVDA5
+2280 DEFB    080,080,00,07,4,4,0
+2290 DEFW    0,MOVDAT,MOVDAT
+2300 DEFB    027,150,00,08,5,5,0
+2310 DEFW    0,MOVDA2,MOVDA2
+2320 DEFB    020,070,00,09,3,3,0
+2330 DEFW    0,MOVDA3,MOVDA3
+2340 DEFB    043,095,00,10,3,3,0
+2350 DEFW    0,MOVDA4,MOVDA4
+2360 DEFB    052,180,00,11,4,4,0
+2370 DEFW    0,MOVDA5,MOVDA5
+2380 DEFB    010,120,00,12,2,2,0
+2390 DEFW    0,MOVDA3,MOVDA3
+2400 DEFB    025,085,00,13,3,3,0
+2410 DEFW    0,MOVDA4,MOVDA4
+2420 DEFB    031,023,00,14,2,2,0
+2430 DEFW    0,MOVDA5,MOVDA5
+2440 DEFB    046,090,00,15,5,5,0
+2450 DEFW    0,MOVDAT,MOVDAT
+2460 DEFB    076,020,00,07,4,4,0
+2470 DEFW    0,MOVDA3,MOVDA3
+2480 DEFB    096,140,00,03,3,3,0
+2490 DEFW    0,MOVDA5,MOVDA5
+2500 DEFB    158,118,00,05,5,5,0
+2510 DEFW    0,MOVDA4,MOVDA4
+2520 DEFB    056,030,00,06,2,2,0
+2530 DEFW    0,MOVDAT,MOVDAT
+2540 DEFB    146,007,00,04,4,4,0
+2550 DEFW    0,MOVDA4,MOVDA4
+2560 DEFB    066,096,00,02,1,1,0
+2570 DEFW    0,MOVDAT,MOVDAT
+2580 DEFB    130,060,00,12,2,2,0
+2590 DEFW    0,MOVDA2,MOVDA2
+2600 DEFB    023,030,00,14,7,7,0
+2610 DEFW    0,MOVDA2,MOVDA2
+2620 DEFB    056,100,00,15,4,4,0
+2630 DEFW    0,MOVDA4,MOVDA4
+2640 DEFB    146,190,00,09,6,6,0
+2650 DEFW    0,MOVDA3,MOVDA3
+2660 DEFB    046,090,00,13,2,2,0
+2670 DEFW    0,MOVDAT,MOVDAT
+2680 DEFB    073,023,00,11,5,5,0
+2690 DEFW    0,MOVDA2,MOVDA2
+2700 DEFB    034,030,00,09,6,6,0
+2710 DEFW    0,MOVDA4,MOVDA4
+2720 DEFB    116,010,00,08,2,2,0
+2730 DEFW    0,MOVDA5,MOVDA5
+2740 DEFB    111,011,00,05,3,3,0
+2750 DEFW    0,MOVDA5,MOVDA5
+2760 DEFB    086,080,00,02,1,1,0
+2770 DEFW    0,MOVDA3,MOVDA3
+2780 DEFB    100,003,00,12,4,4,0
+2790 DEFW    0,MOVDAT,MOVDAT
+2800 DEFB    059,030,00,11,8,8,0
+2810 DEFW    0,MOVDA5,MOVDA5
+2820 MOVDAT:   DEFB    20,0,2,20,1,2,20,2,1,20,2,0,20,2,-1,20,1,-2,20,0,-2
+2830           DEFB    20,-1,-2,20,-2,-1,20,0,2,0
+2840 MOVDA2:   DEFB    80,1,1,40,-1,-3,0
+2850 MOVDA3:   DEFB    50,3,-1,30,-3,-1,0
+2860 MOVDA4:   DEFB    20,1,2,20,2,1,20,2,-1,20,1,-2,0
+2870 MOVDA5:   DEFB    50,2,1,50,1,-2,50,-2,-1,100,-1,2,0
+2880 IDAREA:   DEFS    182
