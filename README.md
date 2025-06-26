@@ -3,4 +3,4 @@
 
 1992年頃の製作の物と思われます
 
-掲載バージョンのMSXPEN　https://msxpen.com/codes/-O9c8dEadBsf0OMcht2O
+掲載バージョンのMSXPEN　https://msxpen.com/codes/-OQZur4rwCeZNbi0Gxb9
